@@ -85,7 +85,7 @@ app.post('/cadastro', async (req,res) => {
         return res.status(422).json({ message: 'A senha é obrigatório!'})
     }
     if(!admin){
-        admin === false
+        admin = false
     }
 
     const perfilExists = await Perfil.findOne({email: email})
@@ -141,9 +141,8 @@ app.post("/login", async (req,res) => {
     try {
         const secret = process.env.SECRET
         const token = jwt.sign({
-            id: perfil._id
+            id: perfil._id,
         }, secret)
-        const admin = perfil.admin
         res.status(200).json({message: "Autenticação realizada com sucesso", token})
 
     } catch (error) {
@@ -173,6 +172,12 @@ app.get("/perfil/:id", async (req, res) => {
     }
 
     res.status(200).json({perfil})
+});
+
+app.get("/filme", async (req, res) => {
+    Filme.find((err, filme) => {
+        res.status(200).json(filme)
+    })
 });
 
 

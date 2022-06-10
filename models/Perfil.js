@@ -4,7 +4,7 @@ const Perfil = mongoose.model('Perfil', {
     nome: String,
     email: String,
     senha: String,
-    admin: Boolean
+    admin: Boolean,
 });
 
 module.exports = Perfil;
