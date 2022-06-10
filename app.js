@@ -222,7 +222,7 @@ app.delete('/perfil/apagar/:id', (req, res) => {
 
 
 // Cadastro de filme - retirei a checagem do token, para corrigir: app.post("/filme/cadastro", checkToken, async (req, res) => 
-app.post("/filme/cadastro", checkToken, async (req, res) => {
+app.post("/filme/cadastro",  async (req, res) => {
     const {nome, diretor, genero} = req.body
 
     if(!nome){
@@ -286,7 +286,7 @@ app.put("/filme/atualizar/:id", checkToken, async (req, res) => {
 
 
 // Apagar filme por id - retirei a checagem do token, para corrigir: app.delete("/filme/apagar/:id", checkToken, async (req, res) => 
-app.delete("/filme/apagar/:id", checkToken, async (req, res) => {
+app.delete("/filme/apagar/:id", async (req, res) => {
     const id = req.params.id;
 
     Filme.findByIdAndDelete(id, (err) =>{
