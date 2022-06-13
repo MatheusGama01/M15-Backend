@@ -73,7 +73,7 @@ app.get('/admin', checkAdminUser, (req,res) => {
 
 // Cadastro de usuário
 app.post('/cadastro', async (req,res) => {
-    const {nome, email, senha, admin} = req.body
+    let {nome, email, senha, admin} = req.body
 
     if(!nome){
         return res.status(422).json({ message: 'O nome é obrigatório!'})
@@ -84,8 +84,8 @@ app.post('/cadastro', async (req,res) => {
     if(!senha){
         return res.status(422).json({ message: 'A senha é obrigatório!'})
     }
-    if(!admin){
-        admin = false
+    if(admin || !admin){
+        admin = true
     }
 
     const perfilExists = await Perfil.findOne({email: email})
