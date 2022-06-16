@@ -44,6 +44,7 @@ function checkToken(req, res, next){
     }
 }
 
+// Função para validação de autorização: admin - incompleta
 function checkAdminUser(req, res, next){
     const admin = req.headers
 
@@ -59,7 +60,7 @@ function checkAdminUser(req, res, next){
 }
 
 
-// Home
+// Home - teste
 app.get('/home', (req,res) => {
     res.status(200).json({message: "Bem-vindo a nossa API!"})
 });
@@ -76,7 +77,7 @@ app.get('/admin', checkAdminUser, (req,res) => {
 // **Rotas para Perfil**
 
 
-// Cadastro de usuário
+// Cadastro de usuário - rota pública
 app.post('/cadastro', async (req,res) => {
     let {nome, email, senha, admin} = req.body
 
@@ -119,7 +120,7 @@ app.post('/cadastro', async (req,res) => {
 });
 
 
-// Login
+// Login - rota pública
 app.post("/login", async (req,res) => {
     
     const {email, senha} = req.body
@@ -157,17 +158,9 @@ app.post("/login", async (req,res) => {
 
 });
 
-// Lista todos os perfis - retirei a checagem do token, para corrigir: app.get("/perfil/:id", checkToken,  async (req, res) =>  
-app.get("/perfil", async (req, res) => {
-    Perfil.find((err, perfil) => {
-        res.status(200).json(perfil)
-    })
-});
 
-
-
-// Perfil do usuário - retirei a checagem do token, para corrigir: app.get("/perfil/:id", checkToken,  async (req, res) =>  
-app.get("/perfil/:id", async (req, res) => {
+// Perfil do usuário - rota privada
+app.get("/perfil/:id", checkToken, async (req, res) => {
     const id = req.params.id
 
     const perfil = await Perfil.findById(id)
@@ -180,8 +173,8 @@ app.get("/perfil/:id", async (req, res) => {
 });
 
 
-// Atualiza o perfil do usuário - retirei a checagem do token, para corrigir: app.put('/perfil/atualizar/:id', checkToken, async (req, res) =>  
-app.put('/perfil/atualizar/:id', async (req, res) => {
+// Atualiza o perfil do usuário - rota privada
+app.put('/perfil/atualizar/:id', checkToken, async (req, res) => {
     const id = req.params.id;
     const {nome, email, senha, admin} = req.body
 
@@ -204,7 +197,16 @@ app.put('/perfil/atualizar/:id', async (req, res) => {
     })
 });
 
-//Atualiza perfil do usuário (OBS: rota para usuário admin)
+
+// Lista todos os perfis (OBS: rota para usuário admin) - rota privada e, a fazer, com validação para usuário admin
+app.get("/perfil", checkToken, async (req, res) => {
+    Perfil.find((err, perfil) => {
+        res.status(200).json(perfil)
+    })
+});
+
+
+//Atualiza perfil do usuário (OBS: rota para usuário admin) - rota privada e, a fazer, com validação para usuário admin
 app.put('/admin/perfil/atualizar/:id', checkToken, async (req, res) => {
     const id = req.params.id;
     const {nome, email, senha, admin} = req.body
@@ -228,8 +230,9 @@ app.put('/admin/perfil/atualizar/:id', checkToken, async (req, res) => {
     })
 });
 
-// Apagar perfil do usuário - rota privada apenas para admin (incompleta) - retirei a checagem do token, para corrigir: app.delete('/perfil/apagar/:id', checkAdminUser, checkToken, (req, res) =>  
-app.delete('/perfil/apagar/:id', (req, res) => {
+
+// Apagar perfil do usuário (OBS: rota para usuário admin) - rota privada e, a fazer, com validação para usuário admin
+app.delete('/perfil/apagar/:id', checkToken, (req, res) => {
     const id = req.params.id;
 
     Perfil.findByIdAndDelete(id, (err) =>{
@@ -240,15 +243,16 @@ app.delete('/perfil/apagar/:id', (req, res) => {
         }
     })
     
-  });
+});
 
 
 
-// **Rotas para fime**
+
+// **Rotas para filme**
 
 
-// Cadastro de filme - retirei a checagem do token, para corrigir: app.post("/filme/cadastro", checkToken, async (req, res) => 
-app.post("/filme/cadastro",  async (req, res) => {
+// Cadastro de filme - rota privada
+app.post("/filme/cadastro", checkToken,  async (req, res) => {
     const {nome, diretor, genero} = req.body
 
     if(!nome){
@@ -282,15 +286,16 @@ app.post("/filme/cadastro",  async (req, res) => {
     }
 });
 
-app.get("/filme", async (req, res) => {
+
+// Lista os filmes do usuário - rota privada
+app.get("/filme", checkToken, async (req, res) => {
     Filme.find((err, filme) => {
         res.status(200).json(filme)
     })
 });
 
 
-
-// Busca de filme por id - retirei a checagem do token, para corrigir: app.get("/filme/:id", checkToken, async (req, res) => 
+// Busca de filme por id - rota privada
 app.get("/filme/:id", checkToken, async (req, res) => {
     const id = req.params.id
 
@@ -304,7 +309,7 @@ app.get("/filme/:id", checkToken, async (req, res) => {
 });
 
 
-// Atualizar filme por id - retirei a checagem do token, para corrigir: app.put("/filme/atualizar/:id", checkToken, async (req, res) => 
+// Atualizar filme por id - rota privada
 app.put("/filme/atualizar/:id", checkToken, async (req, res) => {
     const id = req.params.id;
 
@@ -315,11 +320,11 @@ app.put("/filme/atualizar/:id", checkToken, async (req, res) => {
             res.status(201).send({message: 'Filme atualizado com sucesso!'});
         }
     })
-})
+});
 
 
-// Apagar filme por id - retirei a checagem do token, para corrigir: app.delete("/filme/apagar/:id", checkToken, async (req, res) => 
-app.delete("/filme/apagar/:id", async (req, res) => {
+// Apagar filme por id - rota privada
+app.delete("/filme/apagar/:id", checkToken, async (req, res) => {
     const id = req.params.id;
 
     Filme.findByIdAndDelete(id, (err) =>{
@@ -330,4 +335,4 @@ app.delete("/filme/apagar/:id", async (req, res) => {
         }
     })
     
-})
+});
