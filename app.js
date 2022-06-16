@@ -71,6 +71,11 @@ app.get('/admin', checkAdminUser, (req,res) => {
 });
 
 
+
+
+// **Rotas para Perfil**
+
+
 // Cadastro de usuário
 app.post('/cadastro', async (req,res) => {
     let {nome, email, senha, admin} = req.body
@@ -85,7 +90,7 @@ app.post('/cadastro', async (req,res) => {
         return res.status(422).json({ message: 'A senha é obrigatório!'})
     }
     if(admin || !admin){
-        admin = true
+        admin = false
     }
 
     const perfilExists = await Perfil.findOne({email: email})
@@ -174,12 +179,6 @@ app.get("/perfil/:id", async (req, res) => {
     res.status(200).json({perfil})
 });
 
-app.get("/filme", async (req, res) => {
-    Filme.find((err, filme) => {
-        res.status(200).json(filme)
-    })
-});
-
 
 // Atualiza o perfil do usuário - retirei a checagem do token, para corrigir: app.put('/perfil/atualizar/:id', checkToken, async (req, res) =>  
 app.put('/perfil/atualizar/:id', async (req, res) => {
@@ -205,6 +204,29 @@ app.put('/perfil/atualizar/:id', async (req, res) => {
     })
 });
 
+//Atualiza perfil do usuário (OBS: rota para usuário admin)
+app.put('/admin/perfil/atualizar/:id', checkToken, async (req, res) => {
+    const id = req.params.id;
+    const {nome, email, senha, admin} = req.body
+
+    const salt = await bcrypt.genSalt(12)
+    const passwordHash = await bcrypt.hash(senha, salt)
+
+    const perfil = {
+        nome,
+        email,
+        senha: passwordHash,
+        admin,
+    }
+
+    Perfil.findByIdAndUpdate(id, {$set: perfil}, (err) => {
+        if(err){
+            res.status(500).send({message: err.message});
+        }else{
+            res.status(201).send({message: 'Perfil atualizado com sucesso!'});
+        }
+    })
+});
 
 // Apagar perfil do usuário - rota privada apenas para admin (incompleta) - retirei a checagem do token, para corrigir: app.delete('/perfil/apagar/:id', checkAdminUser, checkToken, (req, res) =>  
 app.delete('/perfil/apagar/:id', (req, res) => {
@@ -255,6 +277,13 @@ app.post("/filme/cadastro",  async (req, res) => {
         res.status(500).json({message: "Houve um erro inesperado, tente novamente mais tarde!"})
     }
 });
+
+app.get("/filme", async (req, res) => {
+    Filme.find((err, filme) => {
+        res.status(200).json(filme)
+    })
+});
+
 
 
 // Busca de filme por id - retirei a checagem do token, para corrigir: app.get("/filme/:id", checkToken, async (req, res) => 
