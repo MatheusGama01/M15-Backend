@@ -243,6 +243,10 @@ app.delete('/perfil/apagar/:id', (req, res) => {
   });
 
 
+
+// **Rotas para fime**
+
+
 // Cadastro de filme - retirei a checagem do token, para corrigir: app.post("/filme/cadastro", checkToken, async (req, res) => 
 app.post("/filme/cadastro",  async (req, res) => {
     const {nome, diretor, genero} = req.body
