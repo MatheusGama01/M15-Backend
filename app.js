@@ -48,10 +48,21 @@ function checkToken(req, res, next){
 
 // Função para validação de autorização: admin - incompleta
 function checkAdminUser(req, res, next){
-    const admin = req.headers
-
-    console.log(admin)
     
+    const authHeader = req.headers['authorization']
+    const token = authHeader && authHeader.split(" ")[1]
+    console.log(token)
+
+    const decode = jwt.decode(token)
+    console.log(`O decode é ${decode}`)
+    const id = decode.id
+    console.log(`O id é ${id}`)
+
+    const perfil = Perfil.findById(id)
+    
+    console.log(perfil.data.admin)
+
+    const admin = false
     if(admin === true){
         next()
     }
