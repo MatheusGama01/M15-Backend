@@ -29,6 +29,7 @@ mongoose.connect(`mongodb+srv://${dbUser}:${dbpassword}@cluster0.j4oft.mongodb.n
 function checkToken(req, res, next){
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(" ")[1]
+    console.log(token)
 
     if(!token){
         return res.status(401).json({message: "Acesso negado!"})
@@ -163,7 +164,7 @@ app.post("/login", async (req,res) => {
 
 
 // Perfil do usuário - rota privada (tirei: ", checkToken" )
-app.get("/perfil/:id", async (req, res) => {
+app.get("/perfil/:id", checkToken, async (req, res) => {
     const id = req.params.id
 
     const perfil = await Perfil.findById(id)
@@ -177,12 +178,13 @@ app.get("/perfil/:id", async (req, res) => {
 
 
 // Atualiza o perfil do usuário - rota privada (tirei: ", checkToken" )
-app.put('/perfil/atualizar/:id', async (req, res) => {
+app.put('/perfil/atualizar/:id', checkToken, async (req, res) => {
     const id = req.params.id;
     const {nome, email, senha, admin} = req.body
 
     const salt = await bcrypt.genSalt(12)
     const passwordHash = await bcrypt.hash(senha, salt)
+    console.log(passwordHash)
 
     const perfil = {
         nome,
@@ -293,8 +295,7 @@ app.post("/filme/cadastro",  async (req, res) => {
 
 
 // Lista os filmes do usuário - rota privada (tirei: ", checkToken" )
-app.get("/filme", async (req, res) => {
-    
+app.get("/filme", checkToken, async (req, res) => {
     Filme.find((err, filme) => {
         res.status(200).json(filme)
     })
