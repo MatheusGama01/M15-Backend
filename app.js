@@ -163,7 +163,7 @@ app.post("/login", async (req,res) => {
 });
 
 
-// Perfil do usuário - rota privada (tirei: ", checkToken" )
+// Perfil do usuário - rota privada
 app.get("/perfil/:id", checkToken, async (req, res) => {
     const id = req.params.id
 
@@ -177,14 +177,13 @@ app.get("/perfil/:id", checkToken, async (req, res) => {
 });
 
 
-// Atualiza o perfil do usuário - rota privada (tirei: ", checkToken" )
+// Atualiza o perfil do usuário - rota privada
 app.put('/perfil/atualizar/:id', checkToken, async (req, res) => {
     const id = req.params.id;
     const {nome, email, senha, admin} = req.body
 
     const salt = await bcrypt.genSalt(12)
     const passwordHash = await bcrypt.hash(senha, salt)
-    console.log(passwordHash)
 
     const perfil = {
         nome,
@@ -203,41 +202,8 @@ app.put('/perfil/atualizar/:id', checkToken, async (req, res) => {
 });
 
 
-// Lista todos os perfis (OBS: rota para usuário admin) - rota privada (tirei: ", checkToken" ) e, a fazer, com validação para usuário admin
-app.get("/perfil", async (req, res) => {
-    Perfil.find((err, perfil) => {
-        res.status(200).json(perfil)
-    })
-});
-
-
-//Atualiza perfil do usuário (OBS: rota para usuário admin) - rota privada (tirei: ", checkToken" ) e, a fazer, com validação para usuário admin
-app.put('/admin/perfil/atualizar/:id', async (req, res) => {
-    const id = req.params.id;
-    const {nome, email, senha, admin} = req.body
-
-    const salt = await bcrypt.genSalt(12)
-    const passwordHash = await bcrypt.hash(senha, salt)
-
-    const perfil = {
-        nome,
-        email,
-        senha: passwordHash,
-        admin,
-    }
-
-    Perfil.findByIdAndUpdate(id, {$set: perfil}, (err) => {
-        if(err){
-            res.status(500).send({message: err.message});
-        }else{
-            res.status(201).send({message: 'Perfil atualizado com sucesso!'});
-        }
-    })
-});
-
-
-// Apagar perfil do usuário - rota privada (tirei: ", checkToken" ) e, a fazer, com validação para usuário admin
-app.delete('/perfil/apagar/:id', (req, res) => {
+// Apagar perfil do usuário - rota privada
+app.delete('/perfil/apagar/:id', checkToken, (req, res) => {
     const id = req.params.id;
 
     Perfil.findByIdAndDelete(id, (err) =>{
@@ -251,13 +217,46 @@ app.delete('/perfil/apagar/:id', (req, res) => {
 });
 
 
+// Lista todos os perfis (OBS: rota para usuário admin) - rota privada e, a fazer, com validação para usuário admin
+app.get("/perfil", checkToken, async (req, res) => {
+    Perfil.find((err, perfil) => {
+        res.status(200).json(perfil)
+    })
+});
+
+
+//Atualiza perfil do usuário (OBS: rota para usuário admin) - rota privada e, a fazer, com validação para usuário admin
+app.put('/admin/perfil/atualizar/:id', checkToken, async (req, res) => {
+    const id = req.params.id;
+    const {nome, email, senha, admin} = req.body
+
+    const salt = await bcrypt.genSalt(12)
+    const passwordHash = await bcrypt.hash(senha, salt)
+
+    const perfil = {
+        nome,
+        email,
+        senha: passwordHash,
+        admin,
+    }
+
+    Perfil.findByIdAndUpdate(id, {$set: perfil}, (err) => {
+        if(err){
+            res.status(500).send({message: err.message});
+        }else{
+            res.status(201).send({message: 'Perfil atualizado com sucesso!'});
+        }
+    })
+});
+
+
 
 
 // **Rotas para filme**
 
 
-// Cadastro de filme - rota privada (tirei: ", checkToken" )
-app.post("/filme/cadastro",  async (req, res) => {
+// Cadastro de filme - rota privada
+app.post("/filme/cadastro", checkToken,  async (req, res) => {
     const {nome, diretor, genero, opiniao, perfil} = req.body
 
     if(!nome){
@@ -294,7 +293,7 @@ app.post("/filme/cadastro",  async (req, res) => {
 });
 
 
-// Lista os filmes do usuário - rota privada (tirei: ", checkToken" )
+// Lista os filmes do usuário - rota privada
 app.get("/filme", checkToken, async (req, res) => {
     Filme.find((err, filme) => {
         res.status(200).json(filme)
@@ -302,8 +301,8 @@ app.get("/filme", checkToken, async (req, res) => {
 });
 
 
-// Busca de filme por id - rota privada (tirei: ", checkToken" )
-app.get("/filme/:id", async (req, res) => {
+// Busca de filme por id - rota privada
+app.get("/filme/:id", checkToken, async (req, res) => {
     const id = req.params.id
 
     const movies = await Filme.findById(id)
@@ -316,8 +315,8 @@ app.get("/filme/:id", async (req, res) => {
 });
 
 
-// Atualizar filme por id - rota privada (tirei: ", checkToken" )
-app.put("/filme/atualizar/:id", async (req, res) => {
+// Atualizar filme por id - rota privada
+app.put("/filme/atualizar/:id", checkToken, async (req, res) => {
     const id = req.params.id;
 
     Filme.findByIdAndUpdate(id, {$set: req.body}, (err) => {
@@ -330,8 +329,8 @@ app.put("/filme/atualizar/:id", async (req, res) => {
 });
 
 
-// Apagar filme por id - rota privada (tirei: ", checkToken" )
-app.delete("/filme/apagar/:id", async (req, res) => {
+// Apagar filme por id - rota privada
+app.delete("/filme/apagar/:id", checkToken, async (req, res) => {
     const id = req.params.id;
 
     Filme.findByIdAndDelete(id, (err) =>{
