@@ -256,7 +256,7 @@ app.delete('/perfil/apagar/:id', (req, res) => {
 
 // Cadastro de filme - rota privada (tirei: ", checkToken" )
 app.post("/filme/cadastro",  async (req, res) => {
-    const {nome, diretor, genero} = req.body
+    const {nome, diretor, genero, opiniao, perfil} = req.body
 
     if(!nome){
         return res.status(422).json({ message: 'O nome é obrigatório!'})
@@ -278,6 +278,8 @@ app.post("/filme/cadastro",  async (req, res) => {
         nome,
         diretor,
         genero,
+        opiniao,
+        perfil,
     })
 
     try{
@@ -292,6 +294,7 @@ app.post("/filme/cadastro",  async (req, res) => {
 
 // Lista os filmes do usuário - rota privada (tirei: ", checkToken" )
 app.get("/filme", async (req, res) => {
+    
     Filme.find((err, filme) => {
         res.status(200).json(filme)
     })
@@ -334,7 +337,7 @@ app.delete("/filme/apagar/:id", async (req, res) => {
         if(err){
             res.status(500).send({message: err.message})
         }else{
-            res.status(201).send({message: 'Filme deletado com sucesso!'});
+            res.status(201).send({message: 'Filme apagado com sucesso!'});
         }
     })
     
