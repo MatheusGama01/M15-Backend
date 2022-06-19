@@ -58,6 +58,12 @@ O Objetivo do projeto é que você nunca perca os filmes que você assistiu,o M1
   npm install mongoose
 ```
 
+
+
+
+
+
+
     
 # 🔦 Endpoints
 
@@ -170,6 +176,16 @@ O Objetivo do projeto é que você nunca perca os filmes que você assistiu,o M1
 | Descrição                           |
 | :---------------------------------- |
 | **Obrigatório**. Token              |
+
+
+
+
+
+
+
+
+
+
 
 
 
