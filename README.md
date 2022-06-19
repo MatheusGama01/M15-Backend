@@ -70,7 +70,7 @@ O Objetivo do projeto é que você nunca perca os filmes que você assistiu,o M1
 #### Cadastra usuário
 
 ```http
-  GET /cadastro
+  POST /cadastro
 ```
 #### Fazer login
 
